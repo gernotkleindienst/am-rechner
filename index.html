@@ -35,11 +35,7 @@
   header{padding:46px 0 74px;position:relative;z-index:1}
   .logo{display:inline-flex;align-items:center;gap:13px;margin-bottom:24px}
   .logo svg{display:block}
-  .logo .pulse{stroke-dasharray:60;stroke-dashoffset:60;animation:draw 2.6s ease-in-out infinite}
-  @keyframes draw{0%{stroke-dashoffset:60}45%{stroke-dashoffset:0}80%,100%{stroke-dashoffset:-60}}
-  .logo-txt{font-weight:800;font-size:21px;color:#fff;letter-spacing:-.4px;line-height:1;
-    display:flex;flex-direction:column;align-items:flex-start}
-  .logo-txt small{font-weight:600;font-size:10px;letter-spacing:3.5px;color:#9AA3AD;text-transform:uppercase;margin-top:4px}
+  .logo-txt{font-weight:700;font-size:27px;color:#fff;letter-spacing:-1.2px;line-height:1}
   h1{font-size:40px;font-weight:800;margin:0 auto 12px;letter-spacing:-1px;color:#fff;line-height:1.05}
   h1 span{color:var(--orange)}
   .sub{color:#B7BEC7;max-width:600px;font-size:15px;margin:0 auto}
@@ -173,11 +169,15 @@
   <div class="wrap">
     <header>
       <div class="logo">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <rect x="1.5" y="1.5" width="45" height="45" rx="14" stroke="#E8780F" stroke-width="2" opacity=".45"/>
-          <path class="pulse" d="M9 24 H17 L20.5 14 L27 34 L30.5 24 H39" stroke="#E8780F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg class="hb-mark" width="48" height="44" viewBox="0 0 190 176" fill="#F5821F" aria-hidden="true">
+          <rect x="0" y="0" width="26" height="176"/>
+          <rect x="26" y="75" width="30" height="26"/>
+          <rect x="56" y="0" width="26" height="176"/>
+          <rect x="104" y="0" width="26" height="176"/>
+          <path d="M130 2 A44 44 0 0 1 130 90 Z"/>
+          <path d="M130 86 A44 44 0 0 1 130 174 Z"/>
         </svg>
-        <span class="logo-txt">heartbeat<small>Consulting</small></span>
+        <span class="logo-txt">heartbeat</span>
       </div>
       <h1>AM <span>Verdienst-Rechner</span></h1>
       <p class="sub">Trag deine Zahlen in die <b>Testing</b>-Spalte ein und sieh live, was du verdienst – inklusive Empfehlungen, mit welchen Hebeln du dein Gehalt am schnellsten steigerst.</p>
@@ -417,7 +417,7 @@ function renderRecs(){
   // 2. Mehr Scaling statt Accelerator
   if(get('accel')>get('scaling')) recs.push({hot:true,
     title:'Mehr Scaling, weniger Accelerator',
-    txt:`Ein Scaling-Kunde bringt ${eur(P.scaling*P.verlaengerung)}/Monat – ein Accelerator nur ${eur(P.incubator*P.betreuung)}. Gleicher Aufwand, 3,5× Ertrag. Bring deine Frontend-Kunden in Scaling.`,
+    txt:`Ein Scaling-Kunde bringt ${eur(P.scaling*P.verlaengerung)}/Monat – ein Accelerator nur ${eur(P.incubator*P.betreuung)}. Gleicher Aufwand, 3,5× Ertrag. Tipp: kleine Accounts an Junior-AMs abgeben und dafür neue, größere aufnehmen.`,
     impact:P.scaling*P.verlaengerung, per:'pro Scaling-Kunde / Monat'});
 
   // 3. Testimonial
@@ -490,8 +490,13 @@ function renderGoal(){
   const val=order.reduce((s,k)=>s+plan[k]*u(k),0);
 
   let html=`<div class="gcat">Realistische Zielaufstellung – aktive Kunden (max ~${CLIENT_CAP_TOTAL})</div><ul>`;
-  order.forEach(k=>{ if(plan[k]>0)
-    html+=`<li class="${k==='scaling'?'star':''}"><span class="q">${plan[k]}×</span> ${labels[k]} <span class="hint">${hints[k]} · ${ec(plan[k]*u(k))}/Mon</span></li>`;
+  const curState=state.f;
+  order.forEach(k=>{
+    const tgt=plan[k], have=curState[k]||0;
+    if(tgt<=0 && have<=0) return;
+    const d=tgt-have;
+    const delta = d>0 ? `+${d} aufbauen` : d<0 ? (k==='accel'?`${-d} an Juniors abgeben`:`${-d} weniger`) : 'passt schon';
+    html+=`<li class="${k==='scaling'?'star':''}"><span class="q">${tgt}×</span> ${labels[k]} <span class="hint">aktuell ${have} → ${delta} · ${ec(tgt*u(k))}/Mon</span></li>`;
   });
   const pct=Math.min(100,Math.round(val/Math.max(1,target)*100));
   if(val>=target){
@@ -543,8 +548,8 @@ function setMode(m){
   mode=m;
   document.querySelectorAll('#modeSeg .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
   document.getElementById('modeNote').textContent=isRamp()
-    ? 'Gilt nur Monat 1–3 · inkl. 2.000 € Fixum · Empfehlung 4.000 € · Testimonial 700 €'
-    : 'Standard · Empfehlung 1.500 € · Testimonial 300 €';
+    ? 'Gilt nur Monat 1–3 · inkl. 2.000 € Fixum'
+    : '';
   save(); renderTable(); renderFix(); recalc();
 }
 
