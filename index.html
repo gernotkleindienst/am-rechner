@@ -460,8 +460,8 @@ function renderRecs(){
 }
 
 /* ---------- Zielgehalt ---------- */
-const CLIENT_CAP_TOTAL=45;                              // ein AM betreut realistisch max ~45 Kunden
-const CLIENT_CAPS={scaling:28, elevate:12, accel:8, master:4}; // Scaling vorrangig, Masterclass am wenigsten
+const CLIENT_CAP_TOTAL=45;   // Ziel-Buch: ein AM betreut realistisch ~45 Kunden
+const SCALING_CAP=25;        // davon max ~25 im Scaling
 const ec=n=>fmt(Math.round(n))+' €';
 
 function renderGoal(){
@@ -481,12 +481,16 @@ function renderGoal(){
   const u=k=>unitOf(LEVERS.find(x=>x.key===k));
   const labels={scaling:'Scaling',elevate:'Elevate',accel:'Accelerator',master:'Masterclass'};
   const hints ={scaling:'stärkster Hebel',elevate:'realistisch einige',accel:'der Rest',master:'am wenigsten'};
-  // Realistischer Kunden-Mix: Großteil Scaling, einige Elevate, etwas Accelerator, Masterclass am wenigsten
-  const MIX={scaling:.55, elevate:.25, accel:.13, master:.07};
-  const avg=order.reduce((s,k)=>s+MIX[k]*u(k),0);
-  const N=Math.min(CLIENT_CAP_TOTAL, Math.max(1, Math.ceil(target/avg)));
-  let plan={}, tot=0;
-  order.forEach(k=>{ plan[k]=Math.round(N*MIX[k]); if(k==='scaling') plan[k]=Math.min(plan[k],CLIENT_CAPS.scaling); tot+=plan[k]; });
+  // Realistisch volles Konto: ~45 Kunden, davon max 25 Scaling, Rest im Mix (Masterclass am wenigsten)
+  const MIX={elevate:.25, accel:.13, master:.07};        // Verteilung der Nicht-Scaling-Plätze
+  const sub=MIX.elevate+MIX.accel+MIX.master;
+  let plan={};
+  plan.scaling=Math.min(SCALING_CAP, Math.round(CLIENT_CAP_TOTAL*0.55));   // 25
+  const rest=CLIENT_CAP_TOTAL-plan.scaling;                                // 20
+  plan.elevate=Math.round(rest*MIX.elevate/sub);
+  plan.accel=Math.round(rest*MIX.accel/sub);
+  plan.master=Math.max(0, rest-plan.elevate-plan.accel);
+  const tot=order.reduce((s,k)=>s+plan[k],0);
   const val=order.reduce((s,k)=>s+plan[k]*u(k),0);
 
   let html=`<div class="gcat">Realistische Zielaufstellung – aktive Kunden (max ~${CLIENT_CAP_TOTAL})</div><ul>`;
@@ -500,7 +504,7 @@ function renderGoal(){
   });
   const pct=Math.min(100,Math.round(val/Math.max(1,target)*100));
   if(val>=target){
-    html+=`<li class="done">✅ Σ ${tot} Kunden → ${ec(val)}/Monat — deckt dein Ziel${isRamp()?' (+ 2.000 € Fixum)':''}.</li>`;
+    html+=`<li class="done">✅ Σ ${tot} Kunden → ${ec(val)}/Monat — ${val>target?'über deinem Ziel':'deckt dein Ziel'}${isRamp()?' (+ Fixum)':''}.</li>`;
   }else{
     html+=`<li class="star">Σ ${tot} Kunden → ${ec(val)}/Monat <span class="hint">${pct}% des Ziels · Rest über Booster${isRamp()?' + Fixum':''}</span></li>`;
   }
