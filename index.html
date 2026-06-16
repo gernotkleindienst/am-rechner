@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<title>AM Verdienst-Rechner · Heartbeat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F5F7; --bg2:#E9EBEF; --card:#FFFFFF; --card2:#F0F1F4;
+    --line:#E2E5EA; --line2:#CDD2DA;
+    --txt:#1A1F27; --muted:#5A636E; --muted2:#8A929C;
+    --orange:#E8780F; --orange-soft:rgba(232,120,15,.10); --orange-line:rgba(232,120,15,.40);
+    --green:#1E9E68; --green-soft:rgba(30,158,104,.12);
+    --blue:#2D7FE0;
+    --dark:#1A1F27; --dark2:#252B35;
+    --r:16px; --r-sm:10px;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --sans:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;padding-bottom:60px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+  /* Hero (dark grey band — the allowed darker area) */
+  .hero{background:var(--dark);border-bottom:1px solid var(--dark2)}
+  header{padding:34px 0 30px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.5px;font-size:13px;color:#9AA3AD}
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:var(--orange);
+    box-shadow:0 0 0 4px rgba(232,120,15,.22);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(232,120,15,.22)}50%{box-shadow:0 0 0 8px transparent}}
+  h1{font-size:30px;font-weight:800;margin:14px 0 6px;letter-spacing:-.5px;color:#FFFFFF}
+  h1 span{color:var(--orange)}
+  .sub{color:#B7BEC7;max-width:660px;font-size:15px}
+  .sub b{color:var(--orange)}
+
+  /* Mode toggle */
+  .modebar{background:var(--card);border-bottom:1px solid var(--line)}
+  .modebar-inner{display:flex;align-items:center;gap:16px;padding:14px 20px;flex-wrap:wrap}
+  .modebar-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:700;color:var(--muted)}
+  .seg{display:inline-flex;background:var(--bg2);border-radius:11px;padding:4px;gap:4px}
+  .seg-btn{border:none;background:none;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--muted);
+    padding:8px 16px;border-radius:8px;cursor:pointer;transition:.15s}
+  .seg-btn:hover{color:var(--txt)}
+  .seg-btn.active{background:var(--orange);color:#fff;box-shadow:0 1px 4px rgba(232,120,15,.4)}
+  .modebar-note{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+
+  section{margin-top:40px}
+  .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .sec-head h2{font-size:21px;font-weight:700;letter-spacing:-.3px}
+  .sec-head .num{font-family:var(--mono);color:var(--orange);font-size:14px;font-weight:700;
+    border:1px solid var(--orange-line);border-radius:7px;padding:2px 9px;background:var(--orange-soft)}
+  .sec-sub{color:var(--muted);margin-bottom:18px;font-size:14px;max-width:760px}
+
+  /* Input table */
+  .tbl-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+    box-shadow:0 1px 4px rgba(20,30,45,.05)}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:right;padding:11px 14px;font-variant-numeric:tabular-nums}
+  th.lbl,td.lbl{text-align:left}
+  thead th{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+    font-weight:600;border-bottom:1px solid var(--line);background:var(--bg2);position:sticky;top:0;z-index:10}
+  thead th.testing{color:var(--orange)}
+  .grouphead td{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);
+    font-weight:700;padding:14px 14px 6px;background:var(--bg2)}
+  tbody tr{border-bottom:1px solid var(--line)}
+  tbody tr:hover{background:rgba(0,0,0,.02)}
+  td.lbl{color:var(--txt);font-size:14px}
+  td.lbl small{display:block;color:var(--muted2);font-size:11.5px;font-weight:400;margin-top:1px}
+
+  .cell-in{display:inline-flex;align-items:center;gap:0;border:1px solid var(--line2);border-radius:8px;
+    overflow:hidden;background:var(--bg2)}
+  .col-testing .cell-in{border-color:var(--orange-line);background:var(--orange-soft)}
+  .cell-in button{background:none;border:none;color:var(--muted);width:24px;height:30px;cursor:pointer;
+    font-size:16px;font-weight:600;line-height:1;transition:.12s}
+  .cell-in button:hover{color:var(--orange);background:rgba(0,0,0,.05)}
+  .cell-in input{width:46px;height:30px;background:none;border:none;color:var(--txt);text-align:center;
+    font-family:var(--mono);font-weight:700;font-size:14px;outline:none;font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+  .cell-in input::-webkit-outer-spin-button,.cell-in input::-webkit-inner-spin-button{-webkit-appearance:none}
+  .col-testing input{color:var(--orange)}
+
+  .row-total td{font-weight:700;background:var(--bg2);border-top:1px solid var(--line2)}
+  .row-total td.num{font-family:var(--mono)}
+  .row-result td{padding:16px 14px;background:var(--card2);border-top:2px solid var(--orange-line)}
+  .row-result td.lbl{font-size:16px;font-weight:700}
+  .row-result td.lbl small{display:block;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:2px}
+  .row-result td.num{font-family:var(--mono);font-weight:700;font-size:18px;font-variant-numeric:tabular-nums}
+  .row-result td.testing{color:var(--orange);font-size:23px}
+
+  .tbl-tools{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .btn{border:1px solid var(--line2);background:var(--card);color:var(--txt);border-radius:9px;
+    padding:9px 15px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:.14s;
+    display:inline-flex;align-items:center;gap:7px}
+  .btn:hover{border-color:var(--orange-line);color:var(--orange)}
+  .btn.ghost{background:none}
+
+  /* Recommendation cards */
+  .rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .rec{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;
+    box-shadow:0 1px 4px rgba(20,30,45,.05);position:relative;overflow:hidden}
+  .rec.hot{border-color:var(--orange-line);background:linear-gradient(160deg,var(--orange-soft),var(--card) 60%)}
+  .rec .rank{font-family:var(--mono);font-size:12px;color:var(--muted2);font-weight:700}
+  .rec.hot .rank{color:var(--orange)}
+  .rec h3{font-size:15.5px;font-weight:700;margin:6px 0 4px}
+  .rec p{font-size:13px;color:var(--muted);line-height:1.45}
+  .rec .impact{font-family:var(--mono);font-weight:700;font-size:22px;color:var(--orange);margin-top:12px}
+  .rec .impact small{font-family:var(--sans);font-size:12px;color:var(--muted);font-weight:500}
+
+  /* Goal calc */
+  .goal{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;
+    box-shadow:0 1px 4px rgba(20,30,45,.05);display:grid;grid-template-columns:1fr 1.35fr;gap:24px;align-items:start}
+  .goal .gin{padding-top:6px}
+  .goal .gin label{font-size:13px;color:var(--muted);font-weight:600;display:block;margin-bottom:8px}
+  .goal-input{display:flex;align-items:center;border:1px solid var(--orange-line);border-radius:11px;
+    background:var(--bg2);padding:6px 14px;max-width:260px}
+  .goal-input input{background:none;border:none;color:var(--orange);font-family:var(--mono);font-weight:700;
+    font-size:26px;width:100%;outline:none;font-variant-numeric:tabular-nums}
+  .goal-input span{color:var(--muted);font-family:var(--mono);font-size:20px}
+  .gap-line{margin-top:14px;font-size:14px;line-height:1.5}
+  .gap-line b{color:var(--orange);font-family:var(--mono)}
+  .gcat{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);font-weight:700;
+    margin:4px 0 9px}
+  .gcat:not(:first-child){margin-top:18px}
+  .gout ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .gout li{display:flex;align-items:center;gap:10px;font-size:14px;padding:9px 12px;background:var(--bg2);
+    border-radius:9px;border:1px solid var(--line)}
+  .gout li .q{font-family:var(--mono);font-weight:700;color:var(--orange);min-width:46px;text-align:right}
+  .gout li .hint{margin-left:auto;font-size:11.5px;color:var(--muted2)}
+  .gout li.done{border-color:var(--green-soft);color:var(--green);background:var(--green-soft)}
+  .gout li.star{border-color:var(--orange-line)}
+
+  /* Fixed data */
+  .fix-note{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--muted2);
+    border:1px solid var(--line);border-radius:8px;padding:5px 11px;margin-bottom:16px}
+  .fix-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+  .fix{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px 16px}
+  .fix .k{font-size:12.5px;color:var(--muted);line-height:1.3}
+  .fix .v{font-family:var(--mono);font-weight:700;font-size:19px;margin-top:6px}
+  .fix-cat{grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);
+    font-weight:700;margin-top:8px}
+
+  footer{margin-top:50px;padding:26px 0 10px;border-top:1px solid var(--line);color:var(--muted2);font-size:12.5px;line-height:1.6}
+  details{margin-top:10px}
+  summary{cursor:pointer;color:var(--muted);font-size:13px}
+  code{font-family:var(--mono);font-size:12px;color:var(--blue);background:var(--bg2);padding:1px 5px;border-radius:4px}
+
+  @media(max-width:760px){
+    .goal{grid-template-columns:1fr}
+    h1{font-size:24px}
+    thead th{position:static}
+  }
+  @media print{ .btn,.tbl-tools{display:none} body{background:#fff} }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <header>
+      <div class="brand"><span class="dot"></span> HEARTBEAT CONSULTING · ACCOUNT MANAGEMENT</div>
+      <h1>AM <span>Verdienst-Rechner</span></h1>
+      <p class="sub">Trag deine Zahlen in die <b>Testing</b>-Spalte ein und sieh live, was du verdienst. V1–V3 sind Beispiel-Szenarien zum Vergleich. Darunter zeigt dir das Dashboard, mit welchen Hebeln du dein Gehalt am schnellsten steigerst.</p>
+    </header>
+  </div>
+</div>
+
+<!-- Mode toggle -->
+<div class="modebar">
+  <div class="wrap modebar-inner">
+    <span class="modebar-label">Verrechnungsmodell</span>
+    <div class="seg" id="modeSeg">
+      <button class="seg-btn active" data-mode="normal" onclick="setMode('normal')">Normale Verrechnung</button>
+      <button class="seg-btn" data-mode="ramping" onclick="setMode('ramping')">Ramping-Bonus</button>
+    </div>
+    <span class="modebar-note" id="modeNote"></span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- INPUTS -->
+  <section id="eingaben">
+    <div class="sec-head"><span class="num">1</span><h2>Deine Eingaben</h2></div>
+    <p class="sec-sub">Alles in der <b style="color:var(--orange)">Testing</b>-Spalte ist deins zum Eintragen. Nutze die +/− Buttons oder tippe direkt. Der Verdienst unten rechnet sich sofort mit. Deine Testing-Werte werden im Browser gespeichert.</p>
+    <div class="tbl-card">
+      <table id="inputTable">
+        <thead>
+          <tr>
+            <th class="lbl">Kennzahl</th>
+            <th class="testing">Testing</th>
+            <th>V1</th><th>V2</th><th>V3</th>
+          </tr>
+        </thead>
+        <tbody id="inputBody"></tbody>
+      </table>
+    </div>
+    <div class="tbl-tools">
+      <button class="btn ghost" onclick="resetTesting()">↺ Testing zurücksetzen</button>
+      <button class="btn ghost" onclick="copyScenario('c')">⇤ V1 laden</button>
+      <button class="btn ghost" onclick="copyScenario('d')">⇤ V2 laden</button>
+      <button class="btn ghost" onclick="copyScenario('e')">⇤ V3 laden</button>
+    </div>
+  </section>
+
+  <!-- GOAL -->
+  <section id="ziel">
+    <div class="sec-head"><span class="num">2</span><h2>Dein Zielgehalt</h2></div>
+    <p class="sec-sub">Wie viel willst du verdienen? Wir nehmen deinen Testing-Verdienst, zeigen die Lücke – und übersetzen sie in eine realistische Zielaufstellung.</p>
+    <div class="goal">
+      <div class="gin">
+        <label>Mein Wunsch-Verdienst pro Monat</label>
+        <div class="goal-input">
+          <span>€</span>
+          <input type="number" id="goalInput" value="10000" min="0" step="500">
+        </div>
+        <div class="gap-line" id="gapLine"></div>
+      </div>
+      <div class="gout" id="goalOut"></div>
+    </div>
+  </section>
+
+  <!-- RECOMMENDATIONS -->
+  <section id="empfehlungen">
+    <div class="sec-head"><span class="num">3</span><h2>Empfehlungen: So steigerst du deinen Verdienst</h2></div>
+    <p class="sec-sub">Live aus deiner Testing-Spalte berechnet – die wirkungsvollsten Hebel zuerst.</p>
+    <div class="rec-grid" id="recGrid"></div>
+  </section>
+
+  <!-- FIXED DATA (parameters — at the very bottom) -->
+  <section id="grundlage">
+    <div class="sec-head"><span class="num">4</span><h2>Datengrundlage</h2></div>
+    <span class="fix-note">🔒 Fix · Standardmodell · wird nicht verändert</span>
+    <div class="fix-grid" id="fixGrid"></div>
+  </section>
+
+  <footer>
+    <div>Berechnungsmodell aus „AM Incentive Modell Plan". Verdienst = Σ (Anzahl × €-Wert je Hebel), im Ramping-Modus zzgl. 2.000 € Fixum (gilt nur Monat 1–3).</div>
+    <details>
+      <summary>Formel im Detail anzeigen</summary>
+      <p style="margin-top:10px">
+      <b>Aktive Kunden:</b> Accelerator × (3.500 € × 4 %) · Frontend-Legacy × (6.000 € × 4 %) · Elevate × (2.000 € × 14 %) · Scaling × (3.500 € × 14 %) · Masterclass × (1.000 € × 14 %) · Backend-Legacy × (6.000 € × 14 %)<br>
+      <b>Schnelle Hebel:</b> 5-Sterne × 100 € · Testimonial × <span id="fTesti"></span> (inkl. Bewertung) · Empfehlungskunde × <span id="fEmpf"></span> (Provision + 1.050 € fürs Selbst-Closen, 10 % von 10.500 €)<br>
+      <b>Cross-Sells:</b> D4Y Bewerber × (1.000 € × 10 %) · Funnel × (2.000 € × 10 %) · Event-Ticket × (1.500 € × 10 %)<br>
+      <b>Ramping-Bonus (Monat 1–3):</b> Empfehlung 4.000 € statt 1.500 € · Testimonial 700 € statt 300 € · zzgl. 2.000 € Fixum/Monat.</p>
+    </details>
+  </footer>
+</div>
+
+<script>
+/* ---------- Fixe Datengrundlage ---------- */
+const P = {
+  incubator:3500, elevate:2000, masterclass:1000, scaling:3500, legacy:6000,
+  betreuung:0.04, verlaengerung:0.14, closing:0.10,
+  bewertung:100, ticket:1500, d4yBewerber:1000, d4yFunnel:2000,
+  empfehlungNormal:1500, empfehlungRamping:4000, selfCloseBonus:1050, /* 10 % von 10.500 € */
+  testimonialNormal:300, testimonialRamping:700,
+  rampingFixum:2000
+};
+
+/* ---------- Modus ---------- */
+let mode='normal';
+const isRamp = ()=>mode==='ramping';
+const fixum  = ()=>isRamp()?P.rampingFixum:0;
+
+/* ---------- Hebel (Excel Zeile 3–16) ---------- */
+const LEVERS = [
+  {key:'accel',  group:'Neukunden / Frontend', label:'Aktive Kunden Accelerator', sub:'Betreuung 4 % vom Incubator-Preis (3.500 €)', unit:P.incubator*P.betreuung, client:true},
+  {key:'flegacy',group:'Neukunden / Frontend', label:'Aktive Kunden Legacy (Frontend)', sub:'Betreuung 4 % vom Legacy-Preis (6.000 €)', unit:P.legacy*P.betreuung, client:true},
+  {key:'elevate',group:'Verlängerungen / Backend', label:'Aktive Kunden Elevate', sub:'Verlängerung 14 % (2.000 €)', unit:P.elevate*P.verlaengerung, client:true},
+  {key:'scaling',group:'Verlängerungen / Backend', label:'Aktive Kunden Scaling', sub:'Verlängerung 14 % (3.500 €)', unit:P.scaling*P.verlaengerung, client:true},
+  {key:'master', group:'Verlängerungen / Backend', label:'Aktive Kunden Masterclass', sub:'Verlängerung 14 % (1.000 €)', unit:P.masterclass*P.verlaengerung, client:true},
+  {key:'blegacy',group:'Verlängerungen / Backend', label:'Aktive Kunden Legacy (Backend)', sub:'Verlängerung 14 % (6.000 €)', unit:P.legacy*P.verlaengerung, client:true},
+  {key:'bewertung',  group:'Schnelle Hebel', label:'5-Sterne-Bewertung', sub:'100 € pro Bewertung', unit:P.bewertung},
+  {key:'testimonial',group:'Schnelle Hebel', label:'Testimonial eingeholt', sub:'', unit:P.testimonialNormal},
+  {key:'empfehlung', group:'Schnelle Hebel', label:'Empfehlungskunde (selbst geclosed)', sub:'', unit:P.empfehlungNormal+P.selfCloseBonus},
+  {key:'csBewerber', group:'Cross-Sells', label:'Cross-Sell D4Y Bewerber-Management', sub:'10 % von 1.000 €', unit:P.d4yBewerber*P.closing},
+  {key:'csFunnel',   group:'Cross-Sells', label:'Cross-Sell Funnel-Aufsetzung', sub:'10 % von 2.000 €', unit:P.d4yFunnel*P.closing},
+  {key:'ticket',     group:'Cross-Sells', label:'Event-Ticket verkauft', sub:'10 % von 1.500 €', unit:P.ticket*P.closing},
+];
+
+/* mode-abhängiger €-Wert je Hebel */
+function unitOf(l){
+  if(l.key==='testimonial') return isRamp()?P.testimonialRamping:P.testimonialNormal;
+  if(l.key==='empfehlung')  return (isRamp()?P.empfehlungRamping:P.empfehlungNormal)+P.selfCloseBonus;
+  return l.unit;
+}
+
+/* ---------- Szenario-Werte aus der Excel ---------- */
+const SCEN = {
+  c:{accel:36,flegacy:0,elevate:0,scaling:0,master:0,blegacy:0,bewertung:4,testimonial:0,empfehlung:0,csBewerber:1,csFunnel:0,ticket:0},
+  d:{accel:20,flegacy:1,elevate:10,scaling:10,master:2,blegacy:0,bewertung:2,testimonial:1,empfehlung:0,csBewerber:1,csFunnel:1,ticket:2},
+  e:{accel:10,flegacy:0,elevate:10,scaling:15,master:4,blegacy:1,bewertung:3,testimonial:1,empfehlung:1,csBewerber:1,csFunnel:1,ticket:2},
+};
+const TESTING_DEFAULT = {accel:30,flegacy:0,elevate:0,scaling:0,master:0,blegacy:0,bewertung:20,testimonial:0,empfehlung:0,csBewerber:0,csFunnel:0,ticket:0};
+
+const COLS = ['f','c','d','e'];
+const COLNAME = {f:'Testing',c:'V1',d:'V2',e:'V3'};
+
+/* realistische Monats-Obergrenzen */
+const CAP = {testimonial:3, empfehlung:2, bewertung:5, ticket:4, csFunnel:2, csBewerber:2};
+
+/* ---------- State ---------- */
+let state = {f:{...TESTING_DEFAULT}, c:{...SCEN.c}, d:{...SCEN.d}, e:{...SCEN.e}};
+const LS='hb_am_calc_v2';
+try{const s=JSON.parse(localStorage.getItem(LS)); if(s){ if(s.mode) mode=s.mode; for(const col of COLS) if(s.state&&s.state[col]) state[col]={...state[col],...s.state[col]};}}catch(e){}
+function save(){try{localStorage.setItem(LS,JSON.stringify({mode,state}));}catch(e){}}
+
+/* ---------- Berechnung ---------- */
+function verdienst(col){return LEVERS.reduce((s,l)=>s+(state[col][l.key]||0)*unitOf(l),0)+fixum();}
+function clients(col){return LEVERS.filter(l=>l.client).reduce((s,l)=>s+(state[col][l.key]||0),0);}
+const fmt=n=>n.toLocaleString('de-DE',{maximumFractionDigits:0});
+const eur=n=>'€ '+fmt(Math.round(n));
+const stripLbl=s=>s.replace(/^.*?:\s*/,'');
+
+/* ---------- Input table ---------- */
+function renderTable(){
+  const body=document.getElementById('inputBody'); body.innerHTML='';
+  let lastGroup=null;
+  LEVERS.forEach(l=>{
+    if(l.group!==lastGroup){
+      lastGroup=l.group;
+      const gr=document.createElement('tr'); gr.className='grouphead';
+      gr.innerHTML=`<td colspan="5">${l.group}</td>`; body.appendChild(gr);
+    }
+    let sub=l.sub;
+    if(l.key==='testimonial') sub=`${eur(unitOf(l))} – Testimonial inkl. Bewertung`;
+    if(l.key==='empfehlung')  sub=`${eur(isRamp()?P.empfehlungRamping:P.empfehlungNormal)} Provision + ${eur(P.selfCloseBonus)} fürs Selbst-Closen`;
+    const tr=document.createElement('tr');
+    let cells=`<td class="lbl">${l.label}<small>${sub}</small></td>`;
+    COLS.forEach(col=>{
+      const cls=col==='f'?'col-testing':'';
+      cells+=`<td class="${cls}"><span class="cell-in">
+          <button onclick="step('${col}','${l.key}',-1)">−</button>
+          <input type="number" min="0" value="${state[col][l.key]||0}" data-col="${col}" data-key="${l.key}">
+          <button onclick="step('${col}','${l.key}',1)">+</button>
+        </span></td>`;
+    });
+    tr.innerHTML=cells; body.appendChild(tr);
+  });
+  const gt=document.createElement('tr'); gt.className='row-total';
+  gt.innerHTML=`<td class="lbl">Gesamt aktive Kunden</td>`+COLS.map(c=>`<td class="num ${c==='f'?'testing':''}" id="tot-${c}"></td>`).join('');
+  body.appendChild(gt);
+  const vr=document.createElement('tr'); vr.className='row-result';
+  vr.innerHTML=`<td class="lbl" id="verLabel">Verdienst / Monat</td>`+COLS.map(c=>`<td class="num ${c==='f'?'testing':''}" id="ver-${c}"></td>`).join('');
+  body.appendChild(vr);
+
+  body.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('input',e=>{
+      state[e.target.dataset.col][e.target.dataset.key]=Math.max(0,Math.floor(+e.target.value||0));
+      save(); recalc();
+    });
+  });
+}
+function step(col,key,d){
+  state[col][key]=Math.max(0,(state[col][key]||0)+d);
+  const inp=document.querySelector(`input[data-col="${col}"][data-key="${key}"]`);
+  if(inp) inp.value=state[col][key];
+  save(); recalc();
+}
+
+/* ---------- Recalc ---------- */
+function recalc(){
+  COLS.forEach(c=>{
+    document.getElementById('tot-'+c).textContent=fmt(clients(c));
+    document.getElementById('ver-'+c).textContent=eur(verdienst(c));
+  });
+  document.getElementById('verLabel').innerHTML='Verdienst / Monat'+(isRamp()?' <small>inkl. 2.000 € Ramping-Fixum (Monat 1–3)</small>':'');
+  renderRecs(); renderGoal();
+}
+
+/* ---------- Empfehlungen ---------- */
+function renderRecs(){
+  const t=state.f, recs=[];
+  const get=k=>t[k]||0;
+  const uEmpf=(isRamp()?P.empfehlungRamping:P.empfehlungNormal)+P.selfCloseBonus;
+  const uTesti=isRamp()?P.testimonialRamping:P.testimonialNormal;
+
+  // 1. Empfehlung = größter Quick-Win
+  if(get('empfehlung')<CAP.empfehlung) recs.push({hot:true,
+    title:'Eine Empfehlung selbst closen',
+    txt:`Dein größter Quick-Win: ${eur(isRamp()?P.empfehlungRamping:P.empfehlungNormal)} Empfehlungsprovision + ${eur(P.selfCloseBonus)} fürs Selbst-Closen. Realistisch sind 1–2 pro Monat.`,
+    impact:uEmpf, per:'pro Empfehlungskunde'});
+
+  // 2. Mehr Scaling statt Accelerator
+  if(get('accel')>get('scaling')) recs.push({hot:true,
+    title:'Mehr Scaling, weniger Accelerator',
+    txt:`Ein Scaling-Kunde bringt ${eur(P.scaling*P.verlaengerung)}/Monat – ein Accelerator nur ${eur(P.incubator*P.betreuung)}. Gleicher Aufwand, 3,5× Ertrag. Bring deine Frontend-Kunden in Scaling.`,
+    impact:P.scaling*P.verlaengerung, per:'pro Scaling-Kunde / Monat'});
+
+  // 3. Testimonial
+  if(get('testimonial')<CAP.testimonial) recs.push({
+    title:'Testimonial einholen',
+    txt:`Testimonial inkl. Bewertung = ${eur(uTesti)}. Frag zufriedene Kunden – realistisch 2–3 pro Monat.`,
+    impact:uTesti, per:'pro Testimonial'});
+
+  // 4. Aktiver Legacy-Kunde
+  if(get('blegacy')<=1) recs.push({
+    title:'Einen Legacy-Kunden halten',
+    txt:`Backend-Legacy ist der stärkste Verlängerungs-Hebel: ${eur(P.legacy*P.verlaengerung)}/Monat pro aktivem Kunden.`,
+    impact:P.legacy*P.verlaengerung, per:'pro Legacy-Kunde / Monat'});
+
+  // 5. Cross-Sell Funnel
+  if(get('csFunnel')<CAP.csFunnel) recs.push({
+    title:'Cross-Sell: Funnel-Aufsetzung',
+    txt:`Verkauf eine Funnel-Aufsetzung an einen Bestandskunden: ${eur(P.d4yFunnel*P.closing)} Provision.`,
+    impact:P.d4yFunnel*P.closing, per:'pro Funnel'});
+
+  // 6. Event-Ticket
+  if(get('ticket')<CAP.ticket) recs.push({
+    title:'Event-Ticket verkaufen',
+    txt:`Bring Kunden aufs Event: ${eur(P.ticket*P.closing)} pro Ticket. Realistisch bis 4 pro Monat.`,
+    impact:P.ticket*P.closing, per:'pro Ticket'});
+
+  document.getElementById('recGrid').innerHTML=recs.slice(0,6).map((r,i)=>`
+    <div class="rec ${r.hot?'hot':''}">
+      <div class="rank">${r.hot?'★ Quick Win':'Hebel #'+(i+1)}</div>
+      <h3>${r.title}</h3>
+      <p>${r.txt}</p>
+      <div class="impact">+${eur(r.impact)} <small>${r.per}</small></div>
+    </div>`).join('');
+}
+
+/* ---------- Zielgehalt ---------- */
+function renderGoal(){
+  const goal=+document.getElementById('goalInput').value||0;
+  const cur=verdienst('f');
+  const gap=goal-cur;
+  const gl=document.getElementById('gapLine');
+  const out=document.getElementById('goalOut');
+
+  if(gap<=0){
+    gl.innerHTML=`✅ Geschafft! Dein Testing-Verdienst von <b>${eur(cur)}</b> liegt ${eur(-gap)} über deinem Ziel.`;
+    out.innerHTML=`<ul><li class="done">🎉 Ziel erreicht – kein zusätzlicher Hebel nötig.</li></ul>`;
+    return;
+  }
+  gl.innerHTML=`Aktuell (Testing): <b>${eur(cur)}</b> · Ziel: <b>${eur(goal)}</b><br>Lücke: <b>${eur(gap)}</b> / Monat`;
+
+  // Zielaufstellung über aktive Kunden (jeweils allein gerechnet)
+  const clientPicks=[
+    {key:'scaling', hint:'stärkster Kunden-Hebel'},
+    {key:'elevate', hint:''},
+    {key:'master',  hint:''},
+    {key:'accel',   hint:'am wenigsten effizient – lieber in Scaling wandeln'},
+  ];
+  let html=`<div class="gcat">Zielaufstellung über aktive Kunden — jeweils allein, um die Lücke zu decken</div><ul>`;
+  clientPicks.forEach(p=>{
+    const l=LEVERS.find(x=>x.key===p.key);
+    const n=Math.ceil(gap/unitOf(l));
+    html+=`<li class="${p.key==='scaling'?'star':''}"><span class="q">${n}×</span> ${l.label}${p.hint?`<span class="hint">${p.hint}</span>`:''}</li>`;
+  });
+  html+=`</ul>`;
+
+  // Realistische Zusatz-Booster pro Monat (mit Caps)
+  const boosters=[
+    {key:'empfehlung', cap:CAP.empfehlung},
+    {key:'testimonial',cap:CAP.testimonial},
+    {key:'csFunnel',   cap:CAP.csFunnel},
+    {key:'ticket',     cap:CAP.ticket},
+  ];
+  html+=`<div class="gcat">Realistische Zusatz-Booster pro Monat</div><ul>`;
+  boosters.forEach(b=>{
+    const l=LEVERS.find(x=>x.key===b.key);
+    const maxVal=b.cap*unitOf(l);
+    html+=`<li><span class="q">+${eur(maxVal).replace('€ ','')}€</span> ${stripLbl(l.label)}<span class="hint">max ${b.cap}×</span></li>`;
+  });
+  html+=`</ul>`;
+  out.innerHTML=html;
+}
+document.getElementById('goalInput').addEventListener('input',renderGoal);
+
+/* ---------- Datengrundlage ---------- */
+function renderFix(){
+  const pct=x=>Math.round(x*100)+' %';
+  const data=[
+    {cat:'Produktpreise (monatlich)'},
+    {k:'Incubator',v:eur(P.incubator)},{k:'Elevate',v:eur(P.elevate)},
+    {k:'Masterclass',v:eur(P.masterclass)},{k:'Scaling',v:eur(P.scaling)},{k:'Legacy',v:eur(P.legacy)},
+    {cat:'Provisionssätze'},
+    {k:'% Betreuung',v:pct(P.betreuung)},{k:'% Verlängerung Betreuung',v:pct(P.verlaengerung)},
+    {k:'Closing-Provi Neukunde / Cross-Sell',v:pct(P.closing)},
+    {cat:'Feste Prämien (Normalmodell)'},
+    {k:'Testimonial (inkl. Bewertung)',v:eur(P.testimonialNormal)},
+    {k:'Empfehlungsprovi Neukunde',v:eur(P.empfehlungNormal)},
+    {k:'5-Sterne-Bewertung',v:eur(P.bewertung)},{k:'Ticketpreis Event',v:eur(P.ticket)},
+    {cat:'Cross-Sells'},
+    {k:'D4Y Bewerber-Management',v:eur(P.d4yBewerber)},{k:'D4Y Funnel-Aufsetzung Recruiting',v:eur(P.d4yFunnel)},
+  ];
+  document.getElementById('fixGrid').innerHTML=data.map(d=>
+    d.cat?`<div class="fix-cat">${d.cat}</div>`:`<div class="fix"><div class="k">${d.k}</div><div class="v">${d.v}</div></div>`
+  ).join('');
+  document.getElementById('fTesti').textContent=eur(isRamp()?P.testimonialRamping:P.testimonialNormal);
+  document.getElementById('fEmpf').textContent=eur(isRamp()?P.empfehlungRamping:P.empfehlungNormal);
+}
+
+/* ---------- Modus-Umschaltung ---------- */
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('#modeSeg .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
+  document.getElementById('modeNote').textContent=isRamp()
+    ? 'Gilt nur Monat 1–3 · inkl. 2.000 € Fixum · Empfehlung 4.000 € · Testimonial 700 €'
+    : 'Standard · Empfehlung 1.500 € · Testimonial 300 €';
+  save(); renderTable(); renderFix(); recalc();
+}
+
+/* ---------- Aktionen ---------- */
+function resetTesting(){state.f={...TESTING_DEFAULT};save();renderTable();recalc();}
+function copyScenario(s){state.f={...SCEN[s]};save();renderTable();recalc();}
+
+/* ---------- Init ---------- */
+setMode(mode); // setzt Toggle + Note + rendert alles
+renderTable(); renderFix(); recalc();
+</script>
+</body>
+</html>
