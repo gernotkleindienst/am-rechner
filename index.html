@@ -28,17 +28,26 @@
     -webkit-font-smoothing:antialiased;padding-bottom:60px}
   .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
 
-  /* Hero (dark grey band — the allowed darker area) */
-  .hero{background:var(--dark);border-bottom:1px solid var(--dark2)}
-  header{padding:34px 0 30px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.5px;font-size:13px;color:#9AA3AD}
-  .brand .dot{width:11px;height:11px;border-radius:50%;background:var(--orange);
-    box-shadow:0 0 0 4px rgba(232,120,15,.22);animation:pulse 2.4s infinite}
-  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(232,120,15,.22)}50%{box-shadow:0 0 0 8px transparent}}
-  h1{font-size:30px;font-weight:800;margin:14px 0 6px;letter-spacing:-.5px;color:#FFFFFF}
+  /* Hero — centered, premium, with curved wave (the allowed darker area) */
+  .hero{position:relative;background:var(--dark);text-align:center;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse 55% 75% at 50% -12%, rgba(232,120,15,.20), transparent 60%);pointer-events:none}
+  header{padding:46px 0 74px;position:relative;z-index:1}
+  .logo{display:inline-flex;align-items:center;gap:13px;margin-bottom:24px}
+  .logo svg{display:block}
+  .logo .pulse{stroke-dasharray:60;stroke-dashoffset:60;animation:draw 2.6s ease-in-out infinite}
+  @keyframes draw{0%{stroke-dashoffset:60}45%{stroke-dashoffset:0}80%,100%{stroke-dashoffset:-60}}
+  .logo-txt{font-weight:800;font-size:21px;color:#fff;letter-spacing:-.4px;line-height:1;
+    display:flex;flex-direction:column;align-items:flex-start}
+  .logo-txt small{font-weight:600;font-size:10px;letter-spacing:3.5px;color:#9AA3AD;text-transform:uppercase;margin-top:4px}
+  h1{font-size:40px;font-weight:800;margin:0 auto 12px;letter-spacing:-1px;color:#fff;line-height:1.05}
   h1 span{color:var(--orange)}
-  .sub{color:#B7BEC7;max-width:660px;font-size:15px}
+  .sub{color:#B7BEC7;max-width:600px;font-size:15px;margin:0 auto}
   .sub b{color:var(--orange)}
+  .hero-tag{margin-top:20px;display:inline-block;font-size:10.5px;letter-spacing:2.5px;color:#9AA3AD;
+    font-weight:600;border:1px solid var(--dark2);border-radius:30px;padding:7px 17px;text-transform:uppercase}
+  .hero-wave{position:absolute;left:0;bottom:-1px;width:100%;height:60px;display:block;z-index:1}
+  .hero-wave path{fill:var(--bg)}
 
   /* Mode toggle */
   .modebar{background:var(--card);border-bottom:1px solid var(--line)}
@@ -62,32 +71,32 @@
   .tbl-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
     box-shadow:0 1px 4px rgba(20,30,45,.05)}
   table{width:100%;border-collapse:collapse}
-  th,td{text-align:right;padding:11px 14px;font-variant-numeric:tabular-nums}
+  th,td{text-align:right;padding:6px 14px;font-variant-numeric:tabular-nums}
   th.lbl,td.lbl{text-align:left}
   thead th{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
     font-weight:600;border-bottom:1px solid var(--line);background:var(--bg2);position:sticky;top:0;z-index:10}
   thead th.testing{color:var(--orange)}
-  .grouphead td{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);
-    font-weight:700;padding:14px 14px 6px;background:var(--bg2)}
+  .grouphead td{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);
+    font-weight:700;padding:8px 14px 2px;background:var(--bg2)}
   tbody tr{border-bottom:1px solid var(--line)}
   tbody tr:hover{background:rgba(0,0,0,.02)}
-  td.lbl{color:var(--txt);font-size:14px}
-  td.lbl small{display:block;color:var(--muted2);font-size:11.5px;font-weight:400;margin-top:1px}
+  td.lbl{color:var(--txt);font-size:13.5px}
+  td.lbl small{display:block;color:var(--muted2);font-size:11px;font-weight:400;margin-top:0}
 
   .cell-in{display:inline-flex;align-items:center;gap:0;border:1px solid var(--line2);border-radius:8px;
     overflow:hidden;background:var(--bg2)}
   .col-testing .cell-in{border-color:var(--orange-line);background:var(--orange-soft)}
-  .cell-in button{background:none;border:none;color:var(--muted);width:24px;height:30px;cursor:pointer;
+  .cell-in button{background:none;border:none;color:var(--muted);width:24px;height:26px;cursor:pointer;
     font-size:16px;font-weight:600;line-height:1;transition:.12s}
   .cell-in button:hover{color:var(--orange);background:rgba(0,0,0,.05)}
-  .cell-in input{width:46px;height:30px;background:none;border:none;color:var(--txt);text-align:center;
+  .cell-in input{width:46px;height:26px;background:none;border:none;color:var(--txt);text-align:center;
     font-family:var(--mono);font-weight:700;font-size:14px;outline:none;font-variant-numeric:tabular-nums;-moz-appearance:textfield}
   .cell-in input::-webkit-outer-spin-button,.cell-in input::-webkit-inner-spin-button{-webkit-appearance:none}
   .col-testing input{color:var(--orange)}
 
   .row-total td{font-weight:700;background:var(--bg2);border-top:1px solid var(--line2)}
   .row-total td.num{font-family:var(--mono)}
-  .row-result td{padding:16px 14px;background:var(--card2);border-top:2px solid var(--orange-line)}
+  .row-result td{padding:12px 14px;background:var(--card2);border-top:2px solid var(--orange-line)}
   .row-result td.lbl{font-size:16px;font-weight:700}
   .row-result td.lbl small{display:block;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:2px}
   .row-result td.num{font-family:var(--mono);font-weight:700;font-size:18px;font-variant-numeric:tabular-nums}
@@ -130,7 +139,7 @@
   .gout ul{list-style:none;display:flex;flex-direction:column;gap:8px}
   .gout li{display:flex;align-items:center;gap:10px;font-size:14px;padding:9px 12px;background:var(--bg2);
     border-radius:9px;border:1px solid var(--line)}
-  .gout li .q{font-family:var(--mono);font-weight:700;color:var(--orange);min-width:46px;text-align:right}
+  .gout li .q{font-family:var(--mono);font-weight:700;color:var(--orange);min-width:62px;text-align:right;white-space:nowrap}
   .gout li .hint{margin-left:auto;font-size:11.5px;color:var(--muted2)}
   .gout li.done{border-color:var(--green-soft);color:var(--green);background:var(--green-soft)}
   .gout li.star{border-color:var(--orange-line)}
@@ -163,11 +172,21 @@
 <div class="hero">
   <div class="wrap">
     <header>
-      <div class="brand"><span class="dot"></span> HEARTBEAT CONSULTING · ACCOUNT MANAGEMENT</div>
+      <div class="logo">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="45" height="45" rx="14" stroke="#E8780F" stroke-width="2" opacity=".45"/>
+          <path class="pulse" d="M9 24 H17 L20.5 14 L27 34 L30.5 24 H39" stroke="#E8780F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="logo-txt">heartbeat<small>Consulting</small></span>
+      </div>
       <h1>AM <span>Verdienst-Rechner</span></h1>
-      <p class="sub">Trag deine Zahlen in die <b>Testing</b>-Spalte ein und sieh live, was du verdienst. V1–V3 sind Beispiel-Szenarien zum Vergleich. Darunter zeigt dir das Dashboard, mit welchen Hebeln du dein Gehalt am schnellsten steigerst.</p>
+      <p class="sub">Trag deine Zahlen in die <b>Testing</b>-Spalte ein und sieh live, was du verdienst – inklusive Empfehlungen, mit welchen Hebeln du dein Gehalt am schnellsten steigerst.</p>
+      <div class="hero-tag">Account Management · Incentive-Modell</div>
     </header>
   </div>
+  <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 30 C 320 60 560 4 760 22 C 980 42 1200 56 1440 26 L1440 60 L0 60 Z"/>
+  </svg>
 </div>
 
 <!-- Mode toggle -->
@@ -282,6 +301,7 @@ const LEVERS = [
   {key:'csBewerber', group:'Cross-Sells', label:'Cross-Sell D4Y Bewerber-Management', sub:'10 % von 1.000 €', unit:P.d4yBewerber*P.closing},
   {key:'csFunnel',   group:'Cross-Sells', label:'Cross-Sell Funnel-Aufsetzung', sub:'10 % von 2.000 €', unit:P.d4yFunnel*P.closing},
   {key:'ticket',     group:'Cross-Sells', label:'Event-Ticket verkauft', sub:'10 % von 1.500 €', unit:P.ticket*P.closing},
+  {key:'reactivate', group:'Ramping-Boni (nur Monat 1–3)', label:'Inaktiver Kunde reaktiviert (selbst geclosed)', sub:'28 % auf Starterpaket 10.500 € (3.500 € × 3)', unit:10500*0.28, rampingOnly:true},
 ];
 
 /* mode-abhängiger €-Wert je Hebel */
@@ -293,11 +313,11 @@ function unitOf(l){
 
 /* ---------- Szenario-Werte aus der Excel ---------- */
 const SCEN = {
-  c:{accel:36,flegacy:0,elevate:0,scaling:0,master:0,blegacy:0,bewertung:4,testimonial:0,empfehlung:0,csBewerber:1,csFunnel:0,ticket:0},
-  d:{accel:20,flegacy:1,elevate:10,scaling:10,master:2,blegacy:0,bewertung:2,testimonial:1,empfehlung:0,csBewerber:1,csFunnel:1,ticket:2},
-  e:{accel:10,flegacy:0,elevate:10,scaling:15,master:4,blegacy:1,bewertung:3,testimonial:1,empfehlung:1,csBewerber:1,csFunnel:1,ticket:2},
+  c:{accel:36,flegacy:0,elevate:0,scaling:0,master:0,blegacy:0,bewertung:4,testimonial:0,empfehlung:0,csBewerber:1,csFunnel:0,ticket:0,reactivate:0},
+  d:{accel:20,flegacy:1,elevate:10,scaling:10,master:2,blegacy:0,bewertung:2,testimonial:1,empfehlung:0,csBewerber:1,csFunnel:1,ticket:2,reactivate:0},
+  e:{accel:10,flegacy:0,elevate:10,scaling:15,master:4,blegacy:1,bewertung:3,testimonial:1,empfehlung:1,csBewerber:1,csFunnel:1,ticket:2,reactivate:0},
 };
-const TESTING_DEFAULT = {accel:30,flegacy:0,elevate:0,scaling:0,master:0,blegacy:0,bewertung:20,testimonial:0,empfehlung:0,csBewerber:0,csFunnel:0,ticket:0};
+const TESTING_DEFAULT = {accel:30,flegacy:0,elevate:0,scaling:0,master:0,blegacy:0,bewertung:20,testimonial:0,empfehlung:0,csBewerber:0,csFunnel:0,ticket:0,reactivate:0};
 
 const COLS = ['f','c','d','e'];
 const COLNAME = {f:'Testing',c:'V1',d:'V2',e:'V3'};
@@ -312,7 +332,7 @@ try{const s=JSON.parse(localStorage.getItem(LS)); if(s){ if(s.mode) mode=s.mode;
 function save(){try{localStorage.setItem(LS,JSON.stringify({mode,state}));}catch(e){}}
 
 /* ---------- Berechnung ---------- */
-function verdienst(col){return LEVERS.reduce((s,l)=>s+(state[col][l.key]||0)*unitOf(l),0)+fixum();}
+function verdienst(col){return LEVERS.reduce((s,l)=>(l.rampingOnly&&!isRamp())?s:s+(state[col][l.key]||0)*unitOf(l),0)+fixum();}
 function clients(col){return LEVERS.filter(l=>l.client).reduce((s,l)=>s+(state[col][l.key]||0),0);}
 const fmt=n=>n.toLocaleString('de-DE',{maximumFractionDigits:0});
 const eur=n=>'€ '+fmt(Math.round(n));
@@ -323,6 +343,7 @@ function renderTable(){
   const body=document.getElementById('inputBody'); body.innerHTML='';
   let lastGroup=null;
   LEVERS.forEach(l=>{
+    if(l.rampingOnly && !isRamp()) return;
     if(l.group!==lastGroup){
       lastGroup=l.group;
       const gr=document.createElement('tr'); gr.className='grouphead';
@@ -384,8 +405,14 @@ function renderRecs(){
   // 1. Empfehlung = größter Quick-Win
   if(get('empfehlung')<CAP.empfehlung) recs.push({hot:true,
     title:'Eine Empfehlung selbst closen',
-    txt:`Dein größter Quick-Win: ${eur(isRamp()?P.empfehlungRamping:P.empfehlungNormal)} Empfehlungsprovision + ${eur(P.selfCloseBonus)} fürs Selbst-Closen. Realistisch sind 1–2 pro Monat.`,
+    txt:`Dein größter Quick-Win: ${eur(isRamp()?P.empfehlungRamping:P.empfehlungNormal)} Empfehlungsprovision + ${eur(P.selfCloseBonus)} fürs Selbst-Closen. Tipp: auf Einmalzahlung pushen, dann fließen die ${eur(P.selfCloseBonus)} sofort statt nach Cashflow. Realistisch 1–2 pro Monat.`,
     impact:uEmpf, per:'pro Empfehlungskunde'});
+
+  // 1b. Reaktivierung inaktiver Kunden — nur Ramping
+  if(isRamp() && get('reactivate')<3) recs.push({hot:true,
+    title:'Inaktive Kunden reaktivieren',
+    txt:`Nur im Ramping: Hol einen inaktiven Kunden zurück und close ihn selbst → 28 % statt 14 % auf das Starterpaket (10.500 €). Ideal, solange dein Kundenstamm noch klein ist.`,
+    impact:10500*0.28, per:'einmalig pro Reaktivierung'});
 
   // 2. Mehr Scaling statt Accelerator
   if(get('accel')>get('scaling')) recs.push({hot:true,
@@ -417,16 +444,26 @@ function renderRecs(){
     txt:`Bring Kunden aufs Event: ${eur(P.ticket*P.closing)} pro Ticket. Realistisch bis 4 pro Monat.`,
     impact:P.ticket*P.closing, per:'pro Ticket'});
 
-  document.getElementById('recGrid').innerHTML=recs.slice(0,6).map((r,i)=>`
+  // 7. Cash Collect — beide Modi, individuell
+  recs.push({
+    title:'Cash Collect: Geld früher reinholen',
+    txt:`Bei Jahresdeals (z. B. 42.000 €) gezielt Cash-Collect-Aktionen fahren, damit das Geld früher fließt statt über die Laufzeit. Höhe ist individuell – aber ein starker Hebel für deinen Cashflow.`,
+    impact:null, per:'je nach Deal-Volumen'});
+
+  document.getElementById('recGrid').innerHTML=recs.slice(0,8).map((r,i)=>`
     <div class="rec ${r.hot?'hot':''}">
       <div class="rank">${r.hot?'★ Quick Win':'Hebel #'+(i+1)}</div>
       <h3>${r.title}</h3>
       <p>${r.txt}</p>
-      <div class="impact">+${eur(r.impact)} <small>${r.per}</small></div>
+      <div class="impact">${r.impact!=null?'+'+eur(r.impact):'individuell'} <small>${r.per}</small></div>
     </div>`).join('');
 }
 
 /* ---------- Zielgehalt ---------- */
+const CLIENT_CAP_TOTAL=45;                              // ein AM betreut realistisch max ~45 Kunden
+const CLIENT_CAPS={scaling:28, elevate:12, accel:8, master:4}; // Scaling vorrangig, Masterclass am wenigsten
+const ec=n=>fmt(Math.round(n))+' €';
+
 function renderGoal(){
   const goal=+document.getElementById('goalInput').value||0;
   const cur=verdienst('f');
@@ -434,41 +471,44 @@ function renderGoal(){
   const gl=document.getElementById('gapLine');
   const out=document.getElementById('goalOut');
 
-  if(gap<=0){
-    gl.innerHTML=`✅ Geschafft! Dein Testing-Verdienst von <b>${eur(cur)}</b> liegt ${eur(-gap)} über deinem Ziel.`;
-    out.innerHTML=`<ul><li class="done">🎉 Ziel erreicht – kein zusätzlicher Hebel nötig.</li></ul>`;
-    return;
-  }
-  gl.innerHTML=`Aktuell (Testing): <b>${eur(cur)}</b> · Ziel: <b>${eur(goal)}</b><br>Lücke: <b>${eur(gap)}</b> / Monat`;
+  gl.innerHTML = gap<=0
+    ? `✅ Geschafft! Dein Testing-Verdienst von <b>${eur(cur)}</b> liegt ${eur(-gap)} über deinem Ziel.`
+    : `Aktuell (Testing): <b>${eur(cur)}</b> · Ziel: <b>${eur(goal)}</b><br>Lücke: <b>${eur(gap)}</b> / Monat`;
 
-  // Zielaufstellung über aktive Kunden (jeweils allein gerechnet)
-  const clientPicks=[
-    {key:'scaling', hint:'stärkster Kunden-Hebel'},
-    {key:'elevate', hint:''},
-    {key:'master',  hint:''},
-    {key:'accel',   hint:'am wenigsten effizient – lieber in Scaling wandeln'},
-  ];
-  let html=`<div class="gcat">Zielaufstellung über aktive Kunden — jeweils allein, um die Lücke zu decken</div><ul>`;
-  clientPicks.forEach(p=>{
-    const l=LEVERS.find(x=>x.key===p.key);
-    const n=Math.ceil(gap/unitOf(l));
-    html+=`<li class="${p.key==='scaling'?'star':''}"><span class="q">${n}×</span> ${l.label}${p.hint?`<span class="hint">${p.hint}</span>`:''}</li>`;
+  // Realistische Zielaufstellung über aktive Kunden (max ~45, Scaling vorrangig)
+  const target=Math.max(0, goal-fixum());
+  const order=['scaling','elevate','accel','master'];
+  const u=k=>unitOf(LEVERS.find(x=>x.key===k));
+  const labels={scaling:'Scaling',elevate:'Elevate',accel:'Accelerator',master:'Masterclass'};
+  const hints ={scaling:'stärkster Hebel',elevate:'realistisch einige',accel:'der Rest',master:'am wenigsten'};
+  // Realistischer Kunden-Mix: Großteil Scaling, einige Elevate, etwas Accelerator, Masterclass am wenigsten
+  const MIX={scaling:.55, elevate:.25, accel:.13, master:.07};
+  const avg=order.reduce((s,k)=>s+MIX[k]*u(k),0);
+  const N=Math.min(CLIENT_CAP_TOTAL, Math.max(1, Math.ceil(target/avg)));
+  let plan={}, tot=0;
+  order.forEach(k=>{ plan[k]=Math.round(N*MIX[k]); if(k==='scaling') plan[k]=Math.min(plan[k],CLIENT_CAPS.scaling); tot+=plan[k]; });
+  const val=order.reduce((s,k)=>s+plan[k]*u(k),0);
+
+  let html=`<div class="gcat">Realistische Zielaufstellung – aktive Kunden (max ~${CLIENT_CAP_TOTAL})</div><ul>`;
+  order.forEach(k=>{ if(plan[k]>0)
+    html+=`<li class="${k==='scaling'?'star':''}"><span class="q">${plan[k]}×</span> ${labels[k]} <span class="hint">${hints[k]} · ${ec(plan[k]*u(k))}/Mon</span></li>`;
   });
+  const pct=Math.min(100,Math.round(val/Math.max(1,target)*100));
+  if(val>=target){
+    html+=`<li class="done">✅ Σ ${tot} Kunden → ${ec(val)}/Monat — deckt dein Ziel${isRamp()?' (+ 2.000 € Fixum)':''}.</li>`;
+  }else{
+    html+=`<li class="star">Σ ${tot} Kunden → ${ec(val)}/Monat <span class="hint">${pct}% des Ziels · Rest über Booster${isRamp()?' + Fixum':''}</span></li>`;
+  }
   html+=`</ul>`;
 
-  // Realistische Zusatz-Booster pro Monat (mit Caps)
-  const boosters=[
-    {key:'empfehlung', cap:CAP.empfehlung},
-    {key:'testimonial',cap:CAP.testimonial},
-    {key:'csFunnel',   cap:CAP.csFunnel},
-    {key:'ticket',     cap:CAP.ticket},
-  ];
-  html+=`<div class="gcat">Realistische Zusatz-Booster pro Monat</div><ul>`;
-  boosters.forEach(b=>{
-    const l=LEVERS.find(x=>x.key===b.key);
-    const maxVal=b.cap*unitOf(l);
-    html+=`<li><span class="q">+${eur(maxVal).replace('€ ','')}€</span> ${stripLbl(l.label)}<span class="hint">max ${b.cap}×</span></li>`;
-  });
+  // Booster ehrlich pro Stück — kein aufgeblähter Max-Wert
+  const baseEmpf=isRamp()?P.empfehlungRamping:P.empfehlungNormal;
+  html+=`<div class="gcat">Zusätzlich obendrauf – pro Stück</div><ul>`;
+  html+=`<li><span class="q">+${ec(baseEmpf)}</span> Empfehlungskunde <span class="hint">+${ec(P.selfCloseBonus)} nach Cashflow (sofort bei Einmalzahlung) · ~1–2/Mon</span></li>`;
+  html+=`<li><span class="q">+${ec(u('testimonial'))}</span> Testimonial <span class="hint">inkl. Bewertung · ~2/Mon</span></li>`;
+  html+=`<li><span class="q">+${ec(P.d4yFunnel*P.closing)}</span> Cross-Sell Funnel <span class="hint">~2/Mon</span></li>`;
+  html+=`<li><span class="q">+${ec(P.ticket*P.closing)}</span> Event-Ticket <span class="hint">max ~4/Mon</span></li>`;
+  if(isRamp()) html+=`<li class="star"><span class="q">+${ec(10500*0.28)}</span> Inaktiver Kunde reaktiviert <span class="hint">28 % auf 10.500 € · einmalig</span></li>`;
   html+=`</ul>`;
   out.innerHTML=html;
 }
