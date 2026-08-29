@@ -10,7 +10,9 @@ Interaktives Dashboard, mit dem ein **Account Manager** seinen monatlichen Verdi
 
 | Datei | Inhalt |
 |-------|--------|
-| `index.html` | **Das komplette Dashboard** – eine einzige, eigenständige Datei (HTML + CSS + JavaScript, keine Abhängigkeiten). Doppelklick öffnet sie in jedem Browser. |
+| `index.html` | **Das komplette Dashboard** – eine einzige, eigenständige Datei (HTML + CSS + JavaScript, keine Abhängigkeiten). Doppelklick öffnet sie in jedem Browser. Das ist die maßgebliche „Code-Datei" des Rechners. |
+| `AM-Verdienst-Rechner.xlsx` | Der Rechner als **Excel/Google-Sheet** mit lebenden Formeln (Testing/V1/V2/V3, Modus-Schalter Normal/Ramping in Zelle B2, komplette Datengrundlage). Für alle, die lieber in der Tabelle rechnen. |
+| `CLAUDE.md` | Projektkontext für Claude Code (lädt automatisch). |
 | `robots.txt` | Hält Suchmaschinen fern (`Disallow: /`). |
 | `README.md` | Diese Datei. |
 
